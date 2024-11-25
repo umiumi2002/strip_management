@@ -4,88 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>フライトストリップ管理</title>
-    <style>
-      /* 画面全体に対してピッタリ2分割 */
-      .container {
-        display: flex;
-        width: 100%;
-        height: 100vh; /* 画面の高さに合わせる */
-        box-sizing: border-box;
-        background-color: black;
-      }
-      #leftPanel,
-      #rightPanel {
-        flex: 1;
-        padding: 20px;
-        box-sizing: border-box;
-        border: 10px solid gray;
-        overflow-y: auto; /* ストリップが増えてもスクロールできるようにする */
-      }
-
-      .strip {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #000;
-        background-color: #f0f0f0;
-      }
-
-      .strip input {
-        margin-right: 10px;
-        flex: 1;
-        width: 10px;
-      }
-
-      /* buttonもstrip内に収めたい場合は、flex: 1;を追加する */
-      .strip button {
-        margin-left: 10px;
-        flex: 1;
-        width: 10px;
-      }
-      button,
-      input {
-        padding: 10px;
-        font-size: 16px; /* テキストも見やすいように大きくする */
-        border-radius: 8px; /* ボタンを少し丸くしてタッチしやすく */
-        margin-bottom: 10px;
-      }
-      /* チェックボタンのスタイル */
-      .check-button {
-        background-color: green;
-        color: white;
-        border: none;
-        padding: 5px;
-        cursor: pointer;
-      }
-      .strip.checked {
-        background-color: green; /* チェックされたストリップの背景色を緑にする */
-      }
-
-      .header {
-        display: flex;
-        align-items: center; /* 垂直方向の中央揃え */
-        justify-content: space-between; /* スペースを均等に配置 */
-      }
-
-      h2 {
-        color: white;
-      }
-
-      /* タブレットの画面幅に応じてレスポンシブ対応 */
-      @media (max-width: 1024px) {
-        .strip input {
-          width: 100%;
-          margin: 5px 0;
-        }
-
-        #leftPanel,
-        #rightPanel {
-          flex-direction: column;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <!-- js読み込み -->
+    <script src="script.js"></script>
   </head>
   <body>
     <!-- <h1>フライトストリップ管理</h1> -->
@@ -95,7 +16,7 @@
         <div class="header">
           <h2>departure</h2>
           <button onclick="addStrip('takeoffStripContainer')">
-            離陸ストリップを追加
+            add strip
           </button>
         </div>
         <div id="takeoffStripContainer" class="leftPanel"></div>
@@ -104,7 +25,7 @@
         <div class="header">
         <h2>arrive</h2>
         <button onclick="addStrip('landingStripContainer')">
-          着陸ストリップを追加
+          add strip
         </button>
         </div>
         <div id="landingStripContainer"></div>
@@ -112,58 +33,7 @@
     </div>
 
     <script>
-      // stripの中のinputをdivで囲みたい場合は、addStrip関数内のinnerHTMLを変更する
 
-      function addStrip(containerId) {
-        const container = document.getElementById(containerId);
-        const newStrip = document.createElement("div");
-        newStrip.classList.add("strip");
-        newStrip.innerHTML = `
-
-                <input type="text" placeholder="航空機名">
-                <input type="text" placeholder="滑走路">
-                <input type="text" placeholder="その他情報">    
-                <button class="check-button">✔</button>        `;
-
-        // スワイプ動作の処理を追加
-        newStrip.addEventListener("touchstart", handleTouchStart);
-        newStrip.addEventListener("touchend", function (event) {
-          handleTouchEnd(event, newStrip);
-        });
-
-        // ストリップをタッチした時にチェックボタンを表示
-        newStrip.addEventListener("click", function () {
-          const checkButton = this.querySelector(".check-button");
-          checkButton.style.display = "block"; // チェックボタンを表示
-        });
-
-        // チェックボタンをクリックした時に、ストリップにチェックを付ける
-        newStrip
-          .querySelector(".check-button")
-          .addEventListener("click", function (event) {
-            event.stopPropagation(); // 親要素のクリックイベントを発火させない
-            newStrip.classList.toggle("checked"); // チェック状態を切り替え
-            this.style.display = "none"; // チェックボタンを非表示にする
-            strip.classList.toggle("checked");
-          });
-        container.appendChild(newStrip);
-      }
-
-      function removeStrip(button) {
-        button.parentElement.remove();
-      }
-      let startX;
-
-      function handleTouchStart(event) {
-        startX = event.touches[0].clientX;
-      }
-
-      function handleTouchEnd(event, strip) {
-        const checkButton = strip.querySelector(".check-button");
-        checkButton.addEventListener("click", () => {
-          // チェック状態を切り替える
-        });
-      }
     </script>
   </body>
 </html>
