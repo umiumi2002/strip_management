@@ -40,12 +40,12 @@ const emergencyData = [
 
           const isArrivePanel = containerId === "landingStripContainer";
 
-    
+          // <input type="text" value="${otherInfo}" readonly>
+
           strip.innerHTML = `
           <div>
             <input type="text" value="plane${index + 1}" readonly>
             <input type="text" value="${runway}" readonly>
-            <input type="text" value="${otherInfo}" readonly>
             </div>
             <div class="check-mark hidden">✓</div>
             ${isArrivePanel ? `<button class="emergency-button">緊急</button>` : ""}
@@ -114,7 +114,6 @@ function addStrip(containerId,isEmergency = false) {
         <div>
           <input type="text" value="${nextPlaneName}" readonly>
           <input type="text" value="${emergencyStripData.runway}" readonly>
-          <input type="text" value="${emergencyStripData.otherInfo}" readonly>
         </div>
         <div class="check-mark hidden" style="background-color: red;">✓</div>
         ${isArrivePanel ? `<button class="emergency-button">復行</button>` : ""}
@@ -126,7 +125,6 @@ function addStrip(containerId,isEmergency = false) {
         <div>
           <input type="text" value="${nextPlaneName}" >
           <input type="text" placeholder="滑走路">
-          <input type="text" placeholder="その他情報">
         </div>
         <div class="check-mark hidden">✓</div>
         ${isArrivePanel ? `<button class="emergency-button">緊急</button>` : ""}
