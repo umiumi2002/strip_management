@@ -5,9 +5,9 @@ UserActivation = "use strict";
     { runway: "16L", otherInfo: " " },
     { runway: "16L", otherInfo: " " },
     { runway: "16L", otherInfo: " " },
-    // { runway: "16L", otherInfo: " " },
-    // { runway: "16L", otherInfo: " " },
-    // { runway: "16L", otherInfo: " " },
+    { runway: "16L", otherInfo: " " },
+    { runway: "16L", otherInfo: " " },
+    { runway: "16L", otherInfo: " " },
     // { runway: "16L", otherInfo: " " },
     // { runway: "16L", otherInfo: " " },
     // { runway: "16L", otherInfo: " " },
@@ -27,7 +27,7 @@ UserActivation = "use strict";
 
   // 緊急用データ行列
 const emergencyData = [
-  { runway: "", otherInfo: "Emergency" },
+  { runway: "16L", otherInfo: "Emergency" },
 ];
     // 初期データをストリップとして表示
     function initializeStrips(containerId, data) {
