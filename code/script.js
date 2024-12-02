@@ -2,50 +2,48 @@ UserActivation = "use strict";
 
 // departure用とarrive用のデータを定義
   const departureData = [
-    { runway: "16L", otherInfo: " " },
-    { runway: "16L", otherInfo: " " },
-    { runway: "16L", otherInfo: " " },
-    { runway: "16L", otherInfo: " " },
-    { runway: "16L", otherInfo: " " },
-    { runway: "16L", otherInfo: " " },
-    // { runway: "16L", otherInfo: " " },
-    // { runway: "16L", otherInfo: " " },
-    // { runway: "16L", otherInfo: " " },
-    // { runway: "16L", otherInfo: " " },
+    { runway: "16L", otherInfo: " " ,time: "0605"},
+    { runway: "16L", otherInfo: " " ,time: " "},
+    { runway: "16L", otherInfo: " " ,time: " "},
+    { runway: "16L", otherInfo: " " ,time: " "},
+    { runway: "16L", otherInfo: " " ,time: " "},
+    { runway: "16L", otherInfo: " " ,time: " "},
+    { runway: "16L", otherInfo: " " ,time: " "},
+    { runway: "16L", otherInfo: " " ,time: " "},
   ];
 
-  const arriveData = [
-    { runway: "16L", otherInfo: " " },
-    { runway: "16L", otherInfo: " " },
-    // { runway: "16L", otherInfo: " " },
-    // { runway: "16L", otherInfo: " " },
-    // { runway: "16L", otherInfo: " " },
-    // { runway: "23", otherInfo: " " },
-    { runway: "23", otherInfo: " " },
-    { runway: "23", otherInfo: " " },
+  const arriveData = [   
+    { runway: "16L", otherInfo: " " ,time: " "},
+    { runway: "16L", otherInfo: " " ,time: " "},
+    { runway: "23", otherInfo: " " ,time: " "},
+    { runway: "23", otherInfo: " " ,time: " "},
+
   ];
 
   // 緊急用データ行列
 const emergencyData = [
-  { runway: "16L", otherInfo: "Emergency" },
+  { runway: "16L", otherInfo: "Emergency",time: " "},
 ];
     // 初期データをストリップとして表示
     function initializeStrips(containerId, data) {
         const container = document.getElementById(containerId);
     
         data.forEach((item, index) => {
-          const { runway, otherInfo } = item;
+          const { runway, otherInfo,time } = item;
           const strip = document.createElement("div");
           strip.classList.add("strip");
 
           const isArrivePanel = containerId === "landingStripContainer";
 
           // <input type="text" value="${otherInfo}" readonly>
+          // <input type="text" placeholder="EOBT" readonly>は離陸用のみ着陸機の場合はEOBTをETAに置き換える
+
 
           strip.innerHTML = `
-          <div>
+            <div>
             <input type="text" value="plane${index + 1}" readonly>
             <input type="text" value="${runway}" readonly>
+            <input type="text" placeholder="Estimated Time" value="${time}" readonly id="estimated">
             </div>
             <div class="check-mark hidden">✓</div>
             ${isArrivePanel ? `<button class="emergency-button">緊急</button>` : ""}
@@ -58,9 +56,10 @@ const emergencyData = [
             const emergencyButton = strip.querySelector(".emergency-button");
             emergencyButton.addEventListener("click", function () {
                 if (!isEmergency) {
+              setTimeout(() => {
               addStrip(containerId, true); // 緊急ストリップを追加
-
               // 緊急ボタンの表示を「着陸復行」に変更
+            },3000);
             this.textContent = "復行";
             } else {
                 removeStrip(containerId); // 追加した緊急ストリップを削除
@@ -114,6 +113,7 @@ function addStrip(containerId,isEmergency = false) {
         <div>
           <input type="text" value="${nextPlaneName}" readonly>
           <input type="text" value="${emergencyStripData.runway}" readonly>
+          <input type="text" value="${emergencyStripData.time}">
         </div>
         <div class="check-mark hidden" style="background-color: red;">✓</div>
         ${isArrivePanel ? `<button class="emergency-button">復行</button>` : ""}
@@ -124,13 +124,27 @@ function addStrip(containerId,isEmergency = false) {
       newStrip.innerHTML = `
         <div>
           <input type="text" value="${nextPlaneName}" >
-          <input type="text" placeholder="滑走路">
+          <input type="text" placeholder="Runway">
+          <input type="text" placeholder="Estimated Time">
+
         </div>
         <div class="check-mark hidden">✓</div>
         ${isArrivePanel ? `<button class="emergency-button">緊急</button>` : ""}
         <button class="check-button">完了</button>
       `;
     }
+
+        // イベントリスナーの追加
+        newStrip.addEventListener("touchstart", handleTouchStart);
+        newStrip.addEventListener("touchmove", handleTouchMove);
+        newStrip.addEventListener("touchend", handleTouchEnd);
+    
+        newStrip.addEventListener("dragstart", handleDragStart);
+        newStrip.addEventListener("dragover", handleDragOver);
+        newStrip.addEventListener("drop", handleDrop);
+        newStrip.addEventListener("dragend", handleDragEnd);
+    
+        container.appendChild(newStrip);
   
     let isEmergencyActive = isEmergency; // 緊急ストリップの状態を管理
 
@@ -200,32 +214,130 @@ function addStrip(containerId,isEmergency = false) {
             strip.classList.toggle("checked");
           });
         container.appendChild(newStrip);
-      }
-    
-
-      // 最後のストリップを削除
-function removeStrip(containerId) {
-  const container = document.getElementById(containerId);
-  const strips = container.querySelectorAll(".strip");
-  if (strips.length > 0) {
-    strips[strips.length - 1].remove(); // 最後のストリップを削除
-  }
 }
-      let startX;
+      
+      // 最後のストリップを削除
+      function removeStrip(containerId) {
+        const container = document.getElementById(containerId);
+        const strips = container.querySelectorAll(".strip");
+        if (strips.length > 0) {
+          strips[strips.length - 1].remove(); // 最後のストリップを削除
+        }
+      }
+
+      let touchStartY = 0; // タッチの開始位置を記録
+      let touchStartElement = null; // ドラッグしている要素を記録
 
       function handleTouchStart(event) {
-        startX = event.touches[0].clientX;
+        if (event.target.tagName === 'INPUT') {
+          return;  // inputフィールド内でのタッチを無視
+        }
+        touchStartElement = this; // タッチした要素を保持
+        touchStartY = event.touches[0].clientY; // タッチ開始位置を記録
+        this.classList.add("dragging"); // 視覚的なドラッグ中の効果を追加
       }
 
-      function handleTouchEnd(event, strip) {
-        const checkButton = strip.querySelector(".check-button");
-        checkButton.addEventListener("click", () => {
-          // チェック状態を切り替える
+      function handleTouchMove(event) {
+        event.preventDefault(); // スクロール動作を防止
+
+        if (event.target.tagName === 'INPUT') {
+          return;  // inputフィールド内でのタッチ動作を無視
+        }
+        const touchY = event.touches[0].clientY; // 現在のタッチ位置
+      
+        const container = this.parentElement; // 親要素を取得
+        const allStrips = Array.from(container.children); // 全ストリップを配列化
+        const targetElement = allStrips.find((strip) => {
+          const rect = strip.getBoundingClientRect();
+          return touchY >= rect.top && touchY <= rect.bottom;
+        });
+      
+        if (targetElement && targetElement !== touchStartElement) {
+          const targetIndex = allStrips.indexOf(targetElement);
+          const draggedIndex = allStrips.indexOf(touchStartElement);
+      
+          if (draggedIndex < targetIndex) {
+            container.insertBefore(touchStartElement, targetElement.nextSibling);
+          } else {
+            container.insertBefore(touchStartElement, targetElement);
+          }
+        }
+      }
+
+      function handleTouchEnd() {
+        this.classList.remove("dragging"); // 視覚効果をリセット
+        touchStartElement = null; // 状態をリセット
+        touchStartY = 0;
+      }
+
+      // inputフィールドのクリック時にタッチイベントを無効化
+  document.querySelectorAll('input').forEach(input => {
+  input.addEventListener('touchstart', function(event) {
+    event.stopPropagation(); // input内のタッチイベントの伝播を停止
+  });
+});
+
+      function enableDragAndDrop(containerId) {
+        const container = document.getElementById(containerId);
+        const strips = container.querySelectorAll(".strip");
+      
+        strips.forEach((strip) => {
+          strip.setAttribute("draggable", "true");
+      
+          strip.addEventListener("dragstart", handleDragStart);
+          strip.addEventListener("dragover", handleDragOver);
+          strip.addEventListener("drop", handleDrop);
+          strip.addEventListener("dragend", handleDragEnd);
+
+          // タッチ操作（タブレット用）
+          strip.addEventListener("touchstart", handleTouchStart);
+          strip.addEventListener("touchmove", handleTouchMove);
+          strip.addEventListener("touchend", handleTouchEnd);
         });
       }
+
+      let draggedElement = null;
+
+function handleDragStart(event) {
+  draggedElement = this; // ドラッグしている要素を保持
+  event.dataTransfer.effectAllowed = "move";
+  this.classList.add("dragging");
+}
+
+function handleDragOver(event) {
+  event.preventDefault(); // ドロップ可能にする
+  event.dataTransfer.dropEffect = "move";
+
+  // ドラッグ中の要素を挿入位置の前に移動
+  const container = this.parentElement;
+  const allStrips = Array.from(container.children);
+  const draggedIndex = allStrips.indexOf(draggedElement);
+  const targetIndex = allStrips.indexOf(this);
+
+  if (draggedIndex < targetIndex) {
+    container.insertBefore(draggedElement, this.nextSibling);
+  } else {
+    container.insertBefore(draggedElement, this);
+  }
+}
+
+function handleDrop(event) {
+  event.preventDefault(); // デフォルトの動作を無効化
+}
+
+function handleDragEnd() {
+  this.classList.remove("dragging");
+  draggedElement = null; // ドラッグ要素をリセット
+}
+
+      
 
       // ページ読み込み時に初期データを表示
   document.addEventListener("DOMContentLoaded", () => {
     initializeStrips("takeoffStripContainer", departureData);
     initializeStrips("landingStripContainer", arriveData);
+
+    enableDragAndDrop("takeoffStripContainer");
+    enableDragAndDrop("landingStripContainer");
   });
+

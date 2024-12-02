@@ -23,15 +23,26 @@
     background-color: #f0f0f0;
   }
   
+  .strip.dragging {
+    opacity: 0.5;
+    border: 2px dashed #007bff;
+  }
+  
 
 
 
-
-  .strip input {
+  .strip div input {
     flex: 1; /* 残りスペースを占有 */
     margin-right: 10px;
     width: 100px;
+    background-color: #f0f0f0;
+    /* font-weight: bold; */
+    /* テキストさいず:テキストさテキスト  */
+    font-size: 25px;
   }
+
+
+
 
   /* buttonもstrip内に収めたい場合は、flex: 1;を追加する */
   .strip button {
