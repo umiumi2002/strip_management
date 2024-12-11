@@ -6,7 +6,7 @@
     <title>フライトストリップ管理</title>
     <link rel="stylesheet" href="style.css">
     <!-- js読み込み -->
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </head>
   <body>
     <!-- <h1>フライトストリップ管理</h1> -->
@@ -24,7 +24,7 @@
       <div id="rightPanel">
         <div class="header">
         <h2>arrive</h2>
-        <button onclick="addStrip('landingStripContainer')">
+        <button onclick="addStrip('landingStripContainer')" id="addArrivalStripButton">
           add strip
         </button>
         </div>
