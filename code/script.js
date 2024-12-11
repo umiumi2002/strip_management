@@ -1,121 +1,14 @@
 UserActivation = "use strict";
 
+
 var request = new XMLHttpRequest();
 request.open('GET', 'https://strip-share.onrender.com', true);
 request.responseType = 'json';
 
-
-let flightdata = {};
-request.onload = function () {
-  flightdata = this.response;
-  console.log(flightdata);
-
-  // ページ読み込み時に初期データを表示
-  initializeStrips();
-
-  // enableDragAndDrop("takeoffStripContainer");
-  // enableDragAndDrop("landingStripContainer");
-};
-request.send();
-
-// 緊急用データ行列
-// const emergencyData = [
-//   { runway: "16L", otherInfo: "Emergency",time: " "},
-// ];
-// 初期データをストリップとして表示
-// function initializeStrips(containerId, stripData) {
-//   const container = document.getElementById(containerId);
-
-
-//   stripData.forEach((item) => {
-//     const { id, name, runway, time, is_completed } = item;
-//     console.log(item)
-//     const strip = document.createElement("div");
-//     strip.classList.add("strip");
-
-//     const isArrivePanel = containerId === "landingStripContainer";
-0/
-//     strip.innerHTML = `
-//             <div>
-//             <input type="text" value="${name}" readonly>
-//             <input type="text" value="${runway}" readonly>
-//             <input type="text"  value="${time}" readonly id="estimated">
-//             </div>
-//             <div class="check-mark ${is_completed ? "" : "hidden"}">✓</div>
-//             ${isArrivePanel ? `<button class="emergency-button">緊急</button>` : ""}
-//             <button class="check-button" data-id="${id}" data-type="${isArrivePanel ? "arrival" : "departure"}">${is_completed ? "取消" : "完了"}</button>
-//           `;
-
-//     container.appendChild(strip);
-
-//     let isEmergency = false;  // 緊急状態を管理するフラグ
-
-//     if (isArrivePanel) {
-//       const emergencyButton = strip.querySelector(".emergency-button");
-//       emergencyButton.addEventListener("click", function () {
-//         if (!isEmergency) {
-//           setTimeout(() => {
-//             addStrip(containerId, true); // 緊急ストリップを追加
-//             // 緊急ボタンの表示を「着陸復行」に変更
-//           }, 3000);
-//           this.textContent = "復行";
-//         } else {
-//           removeStrip(containerId); // 追加した緊急ストリップを削除
-//           // 緊急ボタンの表示を「緊急」に戻す
-//           this.textContent = "緊急";
-//         }
-//         isEmergency = !isEmergency; // 緊急状態をトグル
-//       });
-//     }
-//     // チェックボタンのイベントリスナーを追加
-//     const checkButton = strip.querySelector(".check-button");
-//     const checkMark = strip.querySelector(".check-mark");
-
-//     // `checkMark` の背景色を設定
-//     checkMark.style.backgroundColor = isArrivePanel ? "orange" : "lightblue";
-
-//     checkButton.addEventListener("click", async function () {
-//       const newState = !checkMark.classList.contains("hidden");
-//       checkMark.classList.toggle("hidden"); // 表示/非表示を切り替える
-//       checkButton.textContent = newState ? "完了" : "取消";
-
-
-//       // ボタンが属する行から航空機データを取得する
-//       const airplaneId = checkButton.dataset.id;
-//       const airplaneType = checkButton.dataset.type;
-//       console.log(airplaneId, airplaneType, newState);
-
-//       // サーバーにリクエストを送信して、`is_completed`の状態を更新
-//      try {
-//       const response = await fetch("http://127.0.0.1:5000/update_status", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({ id: parseInt(airplaneId), type: airplaneType, is_completed: newState })
-
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         console.log("更新成功:", data);
-//       } else {
-//         console.error("更新失敗:", data);
-//       }
-//     } catch (error) {
-//       console.error("エラー:", error);
-//     }
-//   });
-//     container.appendChild(strip);
-//   });
-// }
-
-// 10秒ごとに画面をリロード
-setInterval(() => {
+//10秒ごとに画面をリロード
+setInterval(function () {
   location.reload();
 }, 10000);
-
 
 function initializeStrips() {
   // ページ読み込み時にサーバーからストリップデータを取得
@@ -149,155 +42,6 @@ function initializeStrips() {
     })
     .catch(error => console.error("データの取得エラー:", error));
 }
-
-// ストリップの状態をサーバーに送信
-// function updateStripStatus(id, type, isCompleted) {
-//   fetch("http://127.0.0.1:5000/update_status", {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/json' },
-//     body: JSON.stringify({
-//       id: id,
-//       type: type,
-//       is_completed: isCompleted
-//     })
-//   })
-//   .then(response => response.json())
-//   .then(data => {
-//     if (data.status === "success") {
-//       console.log(`状態更新成功: ${data}`);
-//     } else {
-//       console.error(`状態更新失敗: ${data}`);
-//     }
-//   })
-//   .catch(error => {
-//     console.error("状態更新エラー:", error);
-//   });
-// }
-
-
-// 各ストリップを追加する
-// function addStrip(containerId, isEmergency = false) {
-//   const container = document.getElementById(containerId);
-
-//   const isArrivePanel = containerId === "landingStripContainer";
-//   // 既存のストリップ数を取得して次の航空機名を決定
-//   const existingStrips = container.querySelectorAll(".strip");
-//   const nextPlaneNumber = existingStrips.length + 1;
-//   const nextPlaneName = `plane${nextPlaneNumber}`;
-
-//   const newStrip = document.createElement("div");
-//   newStrip.classList.add("strip");
-
-//   if (isEmergency) {
-//     // 緊急用データを使って新しいストリップを追加
-//     const emergencyStripData = emergencyData[0]; // 必要に応じてデータを変更
-//     newStrip.innerHTML = `
-//         <div>
-//           <input type="text" value="${nextPlaneName}" readonly>
-//           <input type="text" value="${emergencyStripData.runway}" readonly>
-//           <input type="text" value="${emergencyStripData.time}">
-//         </div>
-//         <div class="check-mark hidden" style="background-color: red;">✓</div>
-//         ${isArrivePanel ? `<button class="emergency-button">復行</button>` : ""}
-//         <button class="check-button">完了</button>
-//       `;
-//   } else {
-//     // 通常のストリップ追加処理
-//     newStrip.innerHTML = `
-//         <div>
-//           <input type="text" value="${nextPlaneName}" >
-//           <input type="text" placeholder="Runway">
-//           <input type="text" placeholder="Estimated Time">
-
-//         </div>
-//         <div class="check-mark hidden">✓</div>
-//         ${isArrivePanel ? `<button class="emergency-button">緊急</button>` : ""}
-//         <button class="check-button">完了</button>
-//       `;
-//   }
-
-//   // イベントリスナーの追加
-//   newStrip.addEventListener("touchstart", handleTouchStart);
-//   newStrip.addEventListener("touchmove", handleTouchMove);
-//   newStrip.addEventListener("touchend", handleTouchEnd);
-
-//   newStrip.addEventListener("dragstart", handleDragStart);
-//   newStrip.addEventListener("dragover", handleDragOver);
-//   newStrip.addEventListener("drop", handleDrop);
-//   newStrip.addEventListener("dragend", handleDragEnd);
-
-//   container.appendChild(newStrip);
-
-//   let isEmergencyActive = isEmergency; // 緊急ストリップの状態を管理
-
-//   // 緊急ボタンのイベントリスナー（landingStripContainer のみ機能）
-//   if (isArrivePanel) {
-//     const emergencyButton = newStrip.querySelector(".emergency-button");
-//     emergencyButton.addEventListener("click", function () {
-//       if (!isEmergencyActive) {
-//         addStrip(containerId, true); // 緊急ストリップを追加
-
-//         // 緊急ボタンの表示を「着陸復行」に変更
-//         this.textContent = "復行";
-//       } else {
-//         removeStrip(containerId); // 追加した緊急ストリップを削除
-
-//         // 緊急ボタンの表示を「緊急」に戻す
-//         this.textContent = "緊急";
-//       }
-//       isEmergencyActive = !isEmergencyActive; // 緊急状態をトグル
-//     });
-//   }
-
-//   // チェックボタンのイベントリスナーを追加
-//   const checkButton = newStrip.querySelector(".check-button");
-//   const checkMark = newStrip.querySelector(".check-mark");
-
-//   // `checkMark` の背景色を変更
-//   if (isArrivePanel && !isEmergency) {
-//     checkMark.style.backgroundColor = "orange"; // 到着の場合
-//   } else if (!isArrivePanel && !isEmergency) {
-//     checkMark.style.backgroundColor = "lightblue"; // 離陸の場合
-//   }
-
-//   checkButton.addEventListener("click", function () {
-//     checkMark.classList.toggle("hidden"); // 表示/非表示を切り替える
-//     this.textContent = this.textContent === "完了" ? "取消" : "完了";
-//   });
-//   container.appendChild(newStrip);
-
-//   // スワイプ動作の処理を追加
-//   newStrip.addEventListener("touchstart", handleTouchStart);
-//   newStrip.addEventListener("touchend", function (event) {
-//     handleTouchEnd(event, newStrip);
-//   });
-
-//   // ストリップをタッチした時にチェックボタンを表示
-//   newStrip.addEventListener("click", function () {
-//     const checkButton = this.querySelector(".check-button");
-//     checkButton.style.display = "block"; // チェックボタンを表示
-//   });
-
-//   // チェックボタンをクリックした時に、ストリップにチェックを付ける
-//   newStrip
-//     .querySelector(".check-button").addEventListener("click", function (event) {
-//       event.stopPropagation(); // 親要素のクリックイベントを発火させない
-//       newStrip.classList.toggle("checked"); // チェック状態を切り替え
-//       // this.style.display = "none"; // チェックボタンを非表示にする
-
-//       strip.classList.toggle("checked");
-//     });
-//   container.appendChild(newStrip);
-
-//   const stripData = {
-//     planeName: nextPlaneName,
-//     runway: newStrip.querySelector('input[placeholder="Runway"]').value || '',
-//     estimatedTime: newStrip.querySelector('input[placeholder="Estimated Time"]').value || '',
-//     isEmergency: isEmergency
-//   };
-
-//   sendStripToServer(stripData);
-// }
 
 async function addStrip(containerId) {
   const container = document.getElementById(containerId);
@@ -336,6 +80,21 @@ async function addStrip(containerId) {
     location.reload();
   }
 }
+
+let flightdata = {};
+request.onload = function () {
+  flightdata = this.response;
+  console.log(flightdata);
+
+  // ページ読み込み時に初期データを表示
+  initializeStrips();
+
+  // enableDragAndDrop("takeoffStripContainer");
+  // enableDragAndDrop("landingStripContainer");
+};
+request.send();
+
+
 
 // ストリップを作成する関数
 function createStrip(data, containerId) {
