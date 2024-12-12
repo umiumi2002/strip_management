@@ -27,9 +27,6 @@
     opacity: 0.5;
     border: 2px dashed #007bff;
   }
-  
-
-
 
   .strip div input {
     flex: 1; /* 残りスペースを占有 */
@@ -41,7 +38,10 @@
     font-size: 25px;
   }
 
-
+  .hidden-count{
+    color: white;
+    margin: 0;
+  }
 
 
   /* buttonもstrip内に収めたい場合は、flex: 1;を追加する */

@@ -5,6 +5,21 @@ var request = new XMLHttpRequest();
 request.open('GET', 'https://strip-share.onrender.com', true);
 request.responseType = 'json';
 
+let flightdata = {};
+request.onload = function () {
+  flightdata = this.response;
+  console.log(flightdata);
+
+  // ページ読み込み時に初期データを表示
+  initializeStrips();
+  // ページ読み込み時と定期的に更新
+  updateHiddenStripCounts();
+
+  // enableDragAndDrop("takeoffStripContainer");
+  // enableDragAndDrop("landingStripContainer");
+};
+request.send();
+
 //10秒ごとに画面をリロード
 setInterval(function () {
   location.reload();
@@ -81,18 +96,7 @@ async function addStrip(containerId) {
   }
 }
 
-let flightdata = {};
-request.onload = function () {
-  flightdata = this.response;
-  console.log(flightdata);
 
-  // ページ読み込み時に初期データを表示
-  initializeStrips();
-
-  // enableDragAndDrop("takeoffStripContainer");
-  // enableDragAndDrop("landingStripContainer");
-};
-request.send();
 
 
 
@@ -375,6 +379,35 @@ function handleDragEnd() {
   this.classList.remove("dragging");
   draggedElement = null; // ドラッグ要素をリセット
 }
+
+function updateHiddenStripCounts() {
+  // 全ストリップ情報を取得
+  fetch("https://strip-share.onrender.com/")
+    .then(response => response.json())
+    .then(allStrips => {
+      // 表示中のストリップ情報を取得
+      fetch("https://strip-share.onrender.com/get_strips")
+        .then(response => response.json())
+        .then(visibleStrips => {
+          // 離陸の非表示ストリップ数を計算
+          const allTakeoffIds = allStrips.departures.map(strip => strip.id);
+          const visibleTakeoffIds = visibleStrips.departures.map(strip => strip.id);
+          const hiddenTakeoffCount = allTakeoffIds.filter(id => !visibleTakeoffIds.includes(id)).length;
+
+          // 着陸の非表示ストリップ数を計算
+          const allLandingIds = allStrips.arrivals.map(strip => strip.id);
+          const visibleLandingIds = visibleStrips.arrivals.map(strip => strip.id);
+          const hiddenLandingCount = allLandingIds.filter(id => !visibleLandingIds.includes(id)).length;
+
+          // 非表示枚数をHTMLに表示
+          document.getElementById("takeoffHiddenCount").textContent = `非表示ストリップ: ${hiddenTakeoffCount} 枚`;
+          document.getElementById("landingHiddenCount").textContent = `非表示ストリップ: ${hiddenLandingCount} 枚`;
+        })
+        .catch(error => console.error("表示中ストリップ情報の取得エラー:", error));
+    })
+    .catch(error => console.error("全ストリップ情報の取得エラー:", error));
+}
+
 
 
 
