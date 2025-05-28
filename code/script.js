@@ -102,7 +102,7 @@ async function addStrip(containerId) {
 
 // ストリップを作成する関数
 function createStrip(data, containerId) {
-  const { id, name,type, runway, time, is_completed } = data;
+  const { id, name,model, runway, time, is_completed } = data;
   const strip = document.createElement("div");
   strip.classList.add("strip");
 
@@ -113,7 +113,7 @@ function createStrip(data, containerId) {
     <div class="left-block">
       <span class="callsign bold">${name}</span>
       <div class="bottom-row">
-        <span class="aircraft">${type}</span>
+        <span class="aircraft">${model}</span>
         <span class="time">${time}</span>
       </div>
     </div>
