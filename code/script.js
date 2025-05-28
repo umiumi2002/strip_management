@@ -102,17 +102,24 @@ async function addStrip(containerId) {
 
 // ストリップを作成する関数
 function createStrip(data, containerId) {
-  const { id, name, runway, time, is_completed } = data;
+  const { id, name,type, runway, time, is_completed } = data;
   const strip = document.createElement("div");
   strip.classList.add("strip");
 
   const isArrivePanel = containerId === "landingStripContainer";
 
   strip.innerHTML = `
-    <div>
-      <input type="text" value="${name}" readonly>
-      <input type="text" value="${runway}" readonly>
-      <input type="text" value="${time}" readonly id="estimated">
+    <div class="strip-row-top">
+    <div class="left-block">
+      <span class="callsign bold">${name}</span>
+      <div class="bottom-row">
+        <span class="aircraft">${type}</span>
+        <span class="time">${time}</span>
+      </div>
+    </div>
+    <div class="right-block">
+      <span class="runway bold">${runway}</span>
+    </div>
     </div>
     <div class="check-mark ${is_completed ? "" : "hidden"}">✓</div>
     ${isArrivePanel ? `<button class="emergency-button">緊急</button>` : ""}
