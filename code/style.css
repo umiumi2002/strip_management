@@ -126,7 +126,8 @@
     padding: 0px 10px;
     /* ネイビー */
     background-color: navy;
-    position: relative;    /* 追加！ */
+    position: sticky;  /* ← relative → sticky に変更 */
+    top: 0;            /* ← sticky の位置指定 */
     z-index: 1000;         /* 追加！ */
   }
 
