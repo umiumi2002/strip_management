@@ -93,6 +93,10 @@
     /* 枠の幅を設定 */
     border: 1px solid #ccc;
   }
+  button {
+    pointer-events: auto;
+    touch-action: auto;
+  }
 
 
   /* チェックボタンのスタイル */
@@ -120,6 +124,8 @@
     padding: 0px 10px;
     /* ネイビー */
     background-color: navy;
+    position: relative;    /* 追加！ */
+    z-index: 1000;         /* 追加！ */
   }
 
   h2 {
