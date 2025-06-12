@@ -60,7 +60,7 @@
 }
 
 
-  .strip div input {
+.strip div input {
     flex: 1; /* 残りスペースを占有 */
     margin-right: 10px;
     width: 80px;
@@ -97,7 +97,13 @@
   }
   button {
     pointer-events: auto;
-    touch-action: auto;
+    touch-action: manipulation; /* ← iPadでのタップ誤動作を防ぐ */
+    background-color: gray;
+    cursor: pointer;
+  }
+  button:hover {
+    opacity: 0.9;
+    transform: none;
   }
 
 
@@ -153,10 +159,7 @@
 
   }
 
-  button:hover {
-    opacity: 0.9;  /* 軽い変化だけ */
-    transform: none; /* 位置やサイズ変化は避けると無難 */
-}
+
 
   .hidden {
     display: none;

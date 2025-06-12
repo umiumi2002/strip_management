@@ -21,9 +21,9 @@ request.onload = function () {
 request.send();
 
 //10秒ごとに画面をリロード
-setInterval(function () {
-  location.reload();
-}, 10000);
+// setInterval(function () {
+//   location.reload();
+// }, 10000);
 
 function initializeStrips() {
   // ページ読み込み時にサーバーからストリップデータを取得
