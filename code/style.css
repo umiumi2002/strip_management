@@ -92,6 +92,8 @@
     /* margin-bottom: 10px; */
     /* 枠の幅を設定 */
     border: 1px solid #ccc;
+    color: black;          /* ← これを追加！ */
+
   }
   button {
     pointer-events: auto;
