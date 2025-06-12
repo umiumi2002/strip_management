@@ -151,6 +151,11 @@
 
   }
 
+  button:hover {
+    opacity: 0.9;  /* 軽い変化だけ */
+    transform: none; /* 位置やサイズ変化は避けると無難 */
+}
+
   .hidden {
     display: none;
   }
