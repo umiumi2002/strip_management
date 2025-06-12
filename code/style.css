@@ -98,7 +98,7 @@
   button {
     pointer-events: auto;
     touch-action: manipulation; /* ← iPadでのタップ誤動作を防ぐ */
-    background-color: gray;
+    /* background-color: gray; */
     cursor: pointer;
   }
   button:hover {

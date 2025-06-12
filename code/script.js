@@ -59,6 +59,8 @@ function initializeStrips() {
 }
 
 async function addStrip(containerId) {
+  console.log("✅ addStrip called! containerId =", containerId); // ← 追加！
+
   const container = document.getElementById(containerId);
   // サーバーからストリップデータを取得
   const openData = await fetch("https://strip-share.onrender.com/get_strips")
@@ -68,6 +70,10 @@ async function addStrip(containerId) {
   // クリックされたボタンによって、適切なデータを選択
   if (containerId === 'takeoffStripContainer' && openData.departures.length < flightdata.departures.length) {
     const stripData = flightdata.departures[openData.departures.length];
+
+        console.log("🚀 Adding departure strip:", stripData);  // ← 追加！
+
+
 
     // サーバーにストリップを追加するリクエストを送信
     fetch("https://strip-share.onrender.com/add_strip", {
@@ -83,6 +89,9 @@ async function addStrip(containerId) {
   } else if (containerId === 'landingStripContainer' && openData.arrivals.length < flightdata.arrivals.length) {
     const stripData = flightdata.arrivals[openData.arrivals.length];
 
+    console.log("🚀 Adding arrival strip:", stripData);  // ← 追加！
+
+
     // サーバーにストリップを追加するリクエストを送信
     fetch("https://strip-share.onrender.com/add_strip", {
       method: 'POST',
@@ -92,6 +101,7 @@ async function addStrip(containerId) {
         strip_data: stripData
       })
     });
+    console.log("🔄 Reloading page after adding strip...");
     location.reload();
   }
 }
