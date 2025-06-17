@@ -131,14 +131,20 @@ function createStrip(data, containerId) {
       <span class="runway bold">${runway}</span>
     </div>
     </div>
+      <div class="strip-row-bottom">
+
     <div class="check-mark ${is_completed ? "" : "hidden"}">✓</div>
+    <div class="strip-buttons">
+
     ${isArrivePanel ? `<button class="emergency-button">緊急</button>` : ""}
     <button class="check-button" data-id="${id}" data-type="${
     isArrivePanel ? "arrival" : "departure"
   }">${is_completed ? "取消" : "完了"}</button>
     <button class="delete-button" data-id="${id}" data-type="${
     isArrivePanel ? "arrival" : "departure"
-  }">削除</button>
+  }">削</button>
+    </div>
+    </div>
   `;
 
   strip.addEventListener("dragstart", handleDragStart);

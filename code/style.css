@@ -25,6 +25,18 @@
     border: 1px solid #ccc;
 
   }
+  .strip-row-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.strip-buttons {
+  display: flex;
+  gap: 0px; /* ボタン間のスペース */
+}
+
   
   .strip.dragging {
     opacity: 0.5;
