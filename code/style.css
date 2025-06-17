@@ -157,8 +157,8 @@
     border: 1px solid black;
     font-weight: bold;
     font-size: 30px;
-    color: black;
-    background-color: rgba(12, 184, 9, 0.879);
+    color: white;
+    /* background-color: rgba(12, 184, 9, 0.879); */
 
   }
 

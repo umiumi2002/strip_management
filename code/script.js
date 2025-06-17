@@ -166,7 +166,7 @@ function createStrip(data, containerId) {
   const checkButton = strip.querySelector(".check-button");
   const checkMark = strip.querySelector(".check-mark");
 
-  checkMark.style.backgroundColor = isArrivePanel ? "orange" : "lightblue";
+  // checkMark.style.backgroundColor = isArrivePanel ? "orange" : "lightblue";
 
   checkButton.addEventListener("click", async function () {
     const newState = !checkMark.classList.contains("hidden");
