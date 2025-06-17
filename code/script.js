@@ -1,9 +1,8 @@
 UserActivation = "use strict";
 
-
 var request = new XMLHttpRequest();
-request.open('GET', 'https://strip-share.onrender.com', true);
-request.responseType = 'json';
+request.open("GET", "https://strip-share.onrender.com", true);
+request.responseType = "json";
 
 let flightdata = {};
 request.onload = function () {
@@ -21,17 +20,17 @@ request.onload = function () {
 request.send();
 
 //10秒ごとに画面をリロード
-// setInterval(function () {
-//   location.reload();
-// }, 10000);
+setInterval(function () {
+  location.reload();
+}, 10000);
 
 function initializeStrips() {
   // ページ読み込み時にサーバーからストリップデータを取得
   fetch("https://strip-share.onrender.com/get_strips")
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => response.json())
+    .then((data) => {
       // 出発機のストリップを表示
-      data.departures.forEach(stripData => {
+      data.departures.forEach((stripData) => {
         const container = document.getElementById("takeoffStripContainer");
         // 既にIDが追加されているか確認
         // if (!document.querySelector(`[data-id="${stripData.id}"]`)) {
@@ -41,7 +40,7 @@ function initializeStrips() {
       });
 
       // 到着機のストリップを表示
-      data.arrivals.forEach(stripData => {
+      data.arrivals.forEach((stripData) => {
         console.log(stripData);
         const container = document.getElementById("landingStripContainer");
         // 既にIDが追加されているか確認
@@ -55,7 +54,7 @@ function initializeStrips() {
 
       return data;
     })
-    .catch(error => console.error("データの取得エラー:", error));
+    .catch((error) => console.error("データの取得エラー:", error));
 }
 
 async function addStrip(containerId) {
@@ -64,55 +63,56 @@ async function addStrip(containerId) {
   const container = document.getElementById(containerId);
   // サーバーからストリップデータを取得
   const openData = await fetch("https://strip-share.onrender.com/get_strips")
-    .then(response => response.json())
-    .then(data => { return data; })
+    .then((response) => response.json())
+    .then((data) => {
+      return data;
+    });
 
   // クリックされたボタンによって、適切なデータを選択
-  if (containerId === 'takeoffStripContainer' && openData.departures.length < flightdata.departures.length) {
+  if (
+    containerId === "takeoffStripContainer" &&
+    openData.departures.length < flightdata.departures.length
+  ) {
     const stripData = flightdata.departures[openData.departures.length];
 
-        console.log("🚀 Adding departure strip:", stripData);  // ← 追加！
-
-
+    console.log("🚀 Adding departure strip:", stripData); // ← 追加！
 
     // サーバーにストリップを追加するリクエストを送信
     fetch("https://strip-share.onrender.com/add_strip", {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        type: 'departure',
-        strip_data: stripData
-      })
+        type: "departure",
+        strip_data: stripData,
+      }),
     });
     // 画面リロード
     location.reload();
-  } else if (containerId === 'landingStripContainer' && openData.arrivals.length < flightdata.arrivals.length) {
+  } else if (
+    containerId === "landingStripContainer" &&
+    openData.arrivals.length < flightdata.arrivals.length
+  ) {
     const stripData = flightdata.arrivals[openData.arrivals.length];
 
-    console.log("🚀 Adding arrival strip:", stripData);  // ← 追加！
-
+    console.log("🚀 Adding arrival strip:", stripData); // ← 追加！
 
     // サーバーにストリップを追加するリクエストを送信
     fetch("https://strip-share.onrender.com/add_strip", {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        type: 'arrival',
-        strip_data: stripData
-      })
+        type: "arrival",
+        strip_data: stripData,
+      }),
     });
     console.log("🔄 Reloading page after adding strip...");
     location.reload();
   }
 }
 
-
-
-
-
 // ストリップを作成する関数
 function createStrip(data, containerId) {
-  const { id, name,model, runway, time, is_completed } = data;
+  const { id, name, model, runway, time, is_completed } = data;
   const strip = document.createElement("div");
   strip.classList.add("strip");
 
@@ -133,7 +133,12 @@ function createStrip(data, containerId) {
     </div>
     <div class="check-mark ${is_completed ? "" : "hidden"}">✓</div>
     ${isArrivePanel ? `<button class="emergency-button">緊急</button>` : ""}
-    <button class="check-button" data-id="${id}" data-type="${isArrivePanel ? "arrival" : "departure"}">${is_completed ? "取消" : "完了"}</button>
+    <button class="check-button" data-id="${id}" data-type="${
+    isArrivePanel ? "arrival" : "departure"
+  }">${is_completed ? "取消" : "完了"}</button>
+    <button class="delete-button" data-id="${id}" data-type="${
+    isArrivePanel ? "arrival" : "departure"
+  }">削除</button>
   `;
 
   strip.addEventListener("dragstart", handleDragStart);
@@ -145,15 +150,15 @@ function createStrip(data, containerId) {
   strip.addEventListener("touchmove", handleTouchMove);
   strip.addEventListener("touchend", handleTouchEnd);
 
-  let isEmergency = false;  // 緊急状態を管理するフラグ
+  let isEmergency = false; // 緊急状態を管理するフラグ
 
   if (isArrivePanel) {
     const emergencyButton = strip.querySelector(".emergency-button");
     emergencyButton.addEventListener("click", function () {
       if (!isEmergency) {
         // setTimeout(() => {
-          addEmergencyStripToArrivals(containerId,data); // 緊急ストリップを追加
-          this.textContent = "復行";
+        addEmergencyStripToArrivals(containerId, data); // 緊急ストリップを追加
+        this.textContent = "復行";
         // }, 3000);
       } else {
         // removeEmergencyStripFromArrivals(containerId); // 緊急ストリップを削除
@@ -168,9 +173,6 @@ function createStrip(data, containerId) {
 
   // checkMark.style.backgroundColor = isArrivePanel ? "orange" : "lightblue";
 
-  const deletionTimers = {}; // グローバルに削除タイマーを保存
-
-
   checkButton.addEventListener("click", async function () {
     const newState = !checkMark.classList.contains("hidden");
     checkMark.classList.toggle("hidden");
@@ -181,46 +183,24 @@ function createStrip(data, containerId) {
 
     // サーバーに状態を更新するリクエストを送信
     try {
-      const response = await fetch("https://strip-share.onrender.com/update_status", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ id: parseInt(airplaneId), type: airplaneType, is_completed: newState })
-      });
-
+      const response = await fetch(
+        "https://strip-share.onrender.com/update_status",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: parseInt(airplaneId),
+            type: airplaneType,
+            is_completed: newState,
+          }),
+        }
+      );
       const data = await response.json();
 
       if (response.ok) {
         console.log("更新成功:", data);
-        
-      if (!newState) {
-        // 完了にした場合：10秒後に削除タイマーセット
-        const timer = setTimeout(() => {
-          strip.remove(); // UIから削除
-          // 必要ならサーバーからも削除
-          fetch("https://strip-share.onrender.com/remove_strip", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: parseInt(airplaneId),
-              type: airplaneType  // 削除するストリップのタイプ
-             })
-          }).then(res => res.json())
-            .then(data => console.log("削除完了:", data))
-            .catch(err => console.error("削除エラー:", err));
-
-          delete deletionTimers[airplaneId]; // タイマー削除
-        }, 10000);
-
-        deletionTimers[airplaneId] = timer;
-      } else {
-        // 取消にした場合：削除タイマーをキャンセル
-        if (deletionTimers[airplaneId]) {
-          clearTimeout(deletionTimers[airplaneId]);
-          delete deletionTimers[airplaneId];
-          console.log(`削除タイマーキャンセル: ID ${airplaneId}`);
-        }
-      }
       } else {
         console.error("更新失敗:", data);
       }
@@ -229,26 +209,59 @@ function createStrip(data, containerId) {
     }
   });
 
+  const deleteButton = strip.querySelector(".delete-button");
+
+  deleteButton.addEventListener("click", async function () {
+    const airplaneId = parseInt(deleteButton.dataset.id);
+    const airplaneType = deleteButton.dataset.type;
+
+    const confirmDelete = confirm(
+      `ID ${airplaneId} のストリップを削除しますか？`
+    );
+    if (!confirmDelete) return;
+
+    strip.remove(); // UIから削除
+
+    try {
+      const response = await fetch(
+        "https://strip-share.onrender.com/remove_strip",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: airplaneId, type: airplaneType }),
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("削除成功:", data);
+      } else {
+        console.error("削除失敗:", data);
+      }
+    } catch (error) {
+      console.error("通信エラー:", error);
+    }
+  });
+
   return strip;
 }
 
-
 // 緊急時にストリップをarrivalsに追加する関数
 function addEmergencyStripToArrivals(data) {
-  fetch('https://strip-share.onrender.com/update_emergency', {
-    method: 'POST',
+  fetch("https://strip-share.onrender.com/update_emergency", {
+    method: "POST",
     headers: {
-        'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-})
-.then(response => response.json())
-.then(data => {
-    console.log('Emergency flight added:', data);
-    // 追加後の到着機データを表示などの処理を行う
-})
-.catch(error => {
-    console.error('Error:', error);
-});
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Emergency flight added:", data);
+      // 追加後の到着機データを表示などの処理を行う
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 }
 
 // 緊急ストリップを削除する関数
@@ -266,11 +279,11 @@ function removeEmergencyStripFromArrivals(containerId) {
   fetch("https://strip-share.onrender.com/update_arrivals", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      arrivals: flightStrip.arrivals // 更新されたarrivalsデータ
-    })
+      arrivals: flightStrip.arrivals, // 更新されたarrivalsデータ
+    }),
   })
     .then((response) => response.json())
     .then((data) => console.log("Arrivals updated successfully:", data))
@@ -281,8 +294,8 @@ let touchStartY = 0; // タッチの開始位置を記録
 let touchStartElement = null; // ドラッグしている要素を記録
 
 function handleTouchStart(event) {
-  if (event.target.tagName === 'INPUT') {
-    return;  // inputフィールド内でのタッチを無視
+  if (event.target.tagName === "INPUT") {
+    return; // inputフィールド内でのタッチを無視
   }
   touchStartElement = this; // タッチした要素を保持
   console.log("touchStartElement", touchStartElement);
@@ -293,8 +306,8 @@ function handleTouchStart(event) {
 function handleTouchMove(event) {
   event.preventDefault(); // スクロール動作を防止
 
-  if (event.target.tagName === 'INPUT') {
-    return;  // inputフィールド内でのタッチ動作を無視
+  if (event.target.tagName === "INPUT") {
+    return; // inputフィールド内でのタッチ動作を無視
   }
   const touchY = event.touches[0].clientY; // 現在のタッチ位置
 
@@ -327,7 +340,6 @@ function handleTouchEnd() {
 
   // 親要素が landingStripContainer の場合
   updateOrder("landingStripContainer", "arrival");
-
 }
 
 // 共通の順番取得＆送信処理を関数化
@@ -347,12 +359,12 @@ function updateOrder(containerId, type) {
     fetch("https://strip-share.onrender.com/update_order", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         type: type, // "departure" または "arrival"
-        order: newOrder // 順番
-      })
+        order: newOrder, // 順番
+      }),
     })
       .then((response) => {
         if (!response.ok) throw new Error("Network response was not ok");
@@ -367,10 +379,9 @@ function updateOrder(containerId, type) {
   }
 }
 
-
 // inputフィールドのクリック時にタッチイベントを無効化
-document.querySelectorAll('input').forEach(input => {
-  input.addEventListener('touchstart', function (event) {
+document.querySelectorAll("input").forEach((input) => {
+  input.addEventListener("touchstart", function (event) {
     event.stopPropagation(); // input内のタッチイベントの伝播を停止
   });
 });
@@ -431,34 +442,41 @@ function handleDragEnd() {
 function updateHiddenStripCounts() {
   // 全ストリップ情報を取得
   fetch("https://strip-share.onrender.com/")
-    .then(response => response.json())
-    .then(allStrips => {
+    .then((response) => response.json())
+    .then((allStrips) => {
       // 表示中のストリップ情報を取得
       fetch("https://strip-share.onrender.com/get_strips")
-        .then(response => response.json())
-        .then(visibleStrips => {
+        .then((response) => response.json())
+        .then((visibleStrips) => {
           // 離陸の非表示ストリップ数を計算
-          const allTakeoffIds = allStrips.departures.map(strip => strip.id);
-          const visibleTakeoffIds = visibleStrips.departures.map(strip => strip.id);
-          const hiddenTakeoffCount = allTakeoffIds.filter(id => !visibleTakeoffIds.includes(id)).length;
+          const allTakeoffIds = allStrips.departures.map((strip) => strip.id);
+          const visibleTakeoffIds = visibleStrips.departures.map(
+            (strip) => strip.id
+          );
+          const hiddenTakeoffCount = allTakeoffIds.filter(
+            (id) => !visibleTakeoffIds.includes(id)
+          ).length;
 
           // 着陸の非表示ストリップ数を計算
-          const allLandingIds = allStrips.arrivals.map(strip => strip.id);
-          const visibleLandingIds = visibleStrips.arrivals.map(strip => strip.id);
-          const hiddenLandingCount = allLandingIds.filter(id => !visibleLandingIds.includes(id)).length;
+          const allLandingIds = allStrips.arrivals.map((strip) => strip.id);
+          const visibleLandingIds = visibleStrips.arrivals.map(
+            (strip) => strip.id
+          );
+          const hiddenLandingCount = allLandingIds.filter(
+            (id) => !visibleLandingIds.includes(id)
+          ).length;
 
           // 非表示枚数をHTMLに表示
-          document.getElementById("takeoffHiddenCount").textContent = `非表示ストリップ: ${hiddenTakeoffCount} 枚`;
-          document.getElementById("landingHiddenCount").textContent = `非表示ストリップ: ${hiddenLandingCount} 枚`;
+          document.getElementById(
+            "takeoffHiddenCount"
+          ).textContent = `非表示ストリップ: ${hiddenTakeoffCount} 枚`;
+          document.getElementById(
+            "landingHiddenCount"
+          ).textContent = `非表示ストリップ: ${hiddenLandingCount} 枚`;
         })
-        .catch(error => console.error("表示中ストリップ情報の取得エラー:", error));
+        .catch((error) =>
+          console.error("表示中ストリップ情報の取得エラー:", error)
+        );
     })
-    .catch(error => console.error("全ストリップ情報の取得エラー:", error));
+    .catch((error) => console.error("全ストリップ情報の取得エラー:", error));
 }
-
-
-
-
-
-
-
