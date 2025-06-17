@@ -168,6 +168,9 @@ function createStrip(data, containerId) {
 
   // checkMark.style.backgroundColor = isArrivePanel ? "orange" : "lightblue";
 
+  const deletionTimers = {}; // グローバルに削除タイマーを保存
+
+
   checkButton.addEventListener("click", async function () {
     const newState = !checkMark.classList.contains("hidden");
     checkMark.classList.toggle("hidden");
@@ -190,6 +193,34 @@ function createStrip(data, containerId) {
 
       if (response.ok) {
         console.log("更新成功:", data);
+        
+      if (!newState) {
+        // 完了にした場合：10秒後に削除タイマーセット
+        const timer = setTimeout(() => {
+          strip.remove(); // UIから削除
+          // 必要ならサーバーからも削除
+          fetch("https://strip-share.onrender.com/remove_strip", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: parseInt(airplaneId),
+              type: airplaneType  // 削除するストリップのタイプ
+             })
+          }).then(res => res.json())
+            .then(data => console.log("削除完了:", data))
+            .catch(err => console.error("削除エラー:", err));
+
+          delete deletionTimers[airplaneId]; // タイマー削除
+        }, 10000);
+
+        deletionTimers[airplaneId] = timer;
+      } else {
+        // 取消にした場合：削除タイマーをキャンセル
+        if (deletionTimers[airplaneId]) {
+          clearTimeout(deletionTimers[airplaneId]);
+          delete deletionTimers[airplaneId];
+          console.log(`削除タイマーキャンセル: ID ${airplaneId}`);
+        }
+      }
       } else {
         console.error("更新失敗:", data);
       }
